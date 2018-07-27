@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sort"
 )
 
 // Transform json file to csv file
@@ -15,7 +16,7 @@ func Transform(r *bufio.Reader, w *bufio.Writer) {
 
 	rawData, err := ioutil.ReadAll(r)
 	if err != nil {
-		log.Fatalln("Can not open the input file.")
+		log.Fatalln("Can not read the input file.")
 		os.Exit(1)
 	}
 	if len(rawData) == 0 {
@@ -29,13 +30,13 @@ func Transform(r *bufio.Reader, w *bufio.Writer) {
 		os.Exit(1)
 	}
 
-	headers := make([]string, len(jsonList[0]))
+	headers := make([]string, 0, len(jsonList[0]))
 
-	i := 0
 	for k := range jsonList[0] {
-		headers[i] = k
-		i++
+		headers = append(headers, k)
 	}
+
+	sort.Strings(headers)
 
 	csvWriter := csv.NewWriter(w)
 
